@@ -3,6 +3,7 @@ use serde::Deserialize;
 use std::io;
 use std::io::prelude::*;
 use std::fs::File;
+use std::path::Path;
 
 #[derive(Deserialize)]
 struct BatchConfig {
@@ -22,7 +23,8 @@ fn main() {
     println!("Batch config file: {}", params.config_file);
     println!("Force: {}\n", params.force);
 
-    let config = load_batch_config(params.config_file).expect("File should be readable JSON file");
+    let config_path = Path::new(&params.config_file);
+    let config = load_batch_config(config_path).expect("File should be readable JSON file");
     println!("Batch config file contents:");
     println!("base_url: {}", config.base_url);
     println!("id: {}", config.id);
@@ -61,7 +63,7 @@ fn get_cli_params() -> CLIParams {
     }
 }
 
-fn load_batch_config(path: String) -> io::Result<BatchConfig> {
+fn load_batch_config(path: &Path) -> io::Result<BatchConfig> {
     let mut f = File::open(path)?;
     let mut buffer = String::new();
     f.read_to_string(&mut buffer)?;
