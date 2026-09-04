@@ -11,21 +11,27 @@ struct BatchConfig {
     resources: Vec<String>,
 }
 
-struct Config {
+struct CLIParams {
     config_file: String,
     force: bool,
 }
 
 fn main() {
-    let config: Config = get_config();
+    let params = get_cli_params();
+    println!("CLI params:");
+    println!("Batch config file: {}", params.config_file);
+    println!("Force: {}\n", params.force);
 
-    println!("{}", config.config_file);
-    println!("{}", config.force);
-
-    load_batch_config(config.config_file).expect("File should be readable JSON file");
+    let config = load_batch_config(params.config_file).expect("File should be readable JSON file");
+    println!("Batch config file contents:");
+    println!("base_url: {}", config.base_url);
+    println!("id: {}", config.id);
+    for res in config.resources {
+        println!("{}", res);
+    }
 }
 
-fn get_config() -> Config {
+fn get_cli_params() -> CLIParams {
     let matches = Command::new("lta-rs")
         .author("Marc Altmann, marcaltmann@posteo.de")
         .version("1.0")
@@ -49,27 +55,17 @@ fn get_config() -> Config {
     let config_file = matches.get_one::<String>("config_file").unwrap();
     let force = matches.get_one::<bool>("force").unwrap();
 
-    Config {
+    CLIParams {
         config_file: String::from(config_file),
         force: *force,
     }
 }
 
-fn load_batch_config(path: String) -> io::Result<()> {
+fn load_batch_config(path: String) -> io::Result<BatchConfig> {
     let mut f = File::open(path)?;
     let mut buffer = String::new();
     f.read_to_string(&mut buffer)?;
+    let config: BatchConfig = toml::from_str(&buffer).unwrap();
 
-    // Parse the string of data into serde_json::Value.
-    let bc: BatchConfig = toml::from_str(&buffer).unwrap();
-
-    // Access parts of the data by indexing with square brackets.
-    println!("base_url: {}, id: {}", bc.base_url, bc.id);
-
-    let resources = bc.resources;
-    for res in resources {
-        println!("{}", res);
-    }
-
-    Ok(())
+    Ok(config)
 }
