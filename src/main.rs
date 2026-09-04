@@ -1,10 +1,10 @@
 use clap::{Command, Arg, ArgAction};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use std::io;
 use std::io::prelude::*;
 use std::fs::File;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
 struct BatchConfig {
     base_url: String,
     id: String,
@@ -22,7 +22,7 @@ fn main() {
     println!("{}", config.config_file);
     println!("{}", config.force);
 
-    typed_example(config.config_file).expect("File should be readable JSON file");
+    load_batch_config(config.config_file).expect("File should be readable JSON file");
 }
 
 fn get_config() -> Config {
@@ -33,6 +33,7 @@ fn get_config() -> Config {
         .arg(
             Arg::new("config_file")
                 .required(true)
+                .help("Batch config file at the base of the batch directory")
         )
         .arg(
             Arg::new("force")
@@ -41,26 +42,26 @@ fn get_config() -> Config {
                 .help("Always fetch CMDI files")
                 .action(ArgAction::SetTrue)
         )
-        .after_help("Point the tool to the yaml configuration file \
+        .after_help("Point the tool to the TOML configuration file \
                      in the batch directory.")
         .get_matches();
 
-    let config_file: &String = matches.get_one::<String>("config_file").unwrap();
-    let force: &bool = matches.get_one::<bool>("force").unwrap();
+    let config_file = matches.get_one::<String>("config_file").unwrap();
+    let force = matches.get_one::<bool>("force").unwrap();
 
-    return Config {
+    Config {
         config_file: String::from(config_file),
         force: *force,
-    };
+    }
 }
 
-fn typed_example(path: String) -> io::Result<()> {
+fn load_batch_config(path: String) -> io::Result<()> {
     let mut f = File::open(path)?;
     let mut buffer = String::new();
     f.read_to_string(&mut buffer)?;
 
     // Parse the string of data into serde_json::Value.
-    let bc: BatchConfig = serde_json::from_str(&buffer)?;
+    let bc: BatchConfig = toml::from_str(&buffer).unwrap();
 
     // Access parts of the data by indexing with square brackets.
     println!("base_url: {}, id: {}", bc.base_url, bc.id);
