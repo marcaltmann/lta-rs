@@ -1,0 +1,5 @@
+{
+	"base_url": "https://archiv.cdoh.net/",
+	"id": "za_002",
+	"resources": ["za001", "za072", "za402"]
+}
