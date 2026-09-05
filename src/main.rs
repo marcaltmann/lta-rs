@@ -1,16 +1,9 @@
 use clap::{Command, Arg, ArgAction, crate_name, crate_version, crate_description, crate_authors};
-use serde::Deserialize;
-use std::io;
-use std::io::prelude::*;
-use std::fs::File;
 use std::path::Path;
 
-#[derive(Deserialize)]
-struct BatchConfig {
-    base_url: String,
-    id: String,
-    resources: Vec<String>,
-}
+mod config;
+use crate::config::load_batch_config;
+
 
 struct CLIParams {
     config_file: String,
@@ -61,13 +54,4 @@ fn get_cli_params() -> CLIParams {
         config_file: String::from(config_file),
         force: *force,
     }
-}
-
-fn load_batch_config(path: &Path) -> io::Result<BatchConfig> {
-    let mut f = File::open(path)?;
-    let mut buffer = String::new();
-    f.read_to_string(&mut buffer)?;
-    let config: BatchConfig = toml::from_str(&buffer).unwrap();
-
-    Ok(config)
 }
