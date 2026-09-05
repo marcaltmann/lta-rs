@@ -1,4 +1,4 @@
-use clap::{Command, Arg, ArgAction};
+use clap::{Command, Arg, ArgAction, crate_name, crate_version, crate_description, crate_authors};
 use serde::Deserialize;
 use std::io;
 use std::io::prelude::*;
@@ -34,10 +34,10 @@ fn main() {
 }
 
 fn get_cli_params() -> CLIParams {
-    let matches = Command::new("lta-rs")
-        .author("Marc Altmann, marcaltmann@posteo.de")
-        .version("1.0")
-        .about("Long term archiving tool")
+    let matches = Command::new(crate_name!())
+        .author(crate_authors!("\n"))
+        .version(crate_version!())
+        .about(crate_description!())
         .arg(
             Arg::new("config_file")
                 .required(true)

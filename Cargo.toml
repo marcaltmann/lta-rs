@@ -1,9 +1,11 @@
 [package]
 name = "lta-rs"
 version = "0.1.0"
+authors = ["Marc Altmann <marcaltmann@posteo.de>"]
+description = "Long term archiving tool"
 edition = "2024"
 
 [dependencies]
-clap = "4.6.6"
+clap = { version = "4.6.6", features = ["cargo"] }
 serde = { version = "1.0.229", features = ["derive"] }
 toml = "1.1.5"
