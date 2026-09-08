@@ -14,7 +14,7 @@ pub struct CLIParams {
 pub struct BatchConfig {
     pub base_url: String,
     pub id: String,
-    pub resources: Vec<String>,
+    pub sessions: Vec<String>,
 }
 
 pub fn get_cli_params() -> CLIParams {

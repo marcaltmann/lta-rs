@@ -1,5 +1,8 @@
 use std::path::Path;
 
+mod checks;
+use crate::checks::check_dirs;
+
 mod config;
 use crate::config::{get_cli_params, load_batch_config};
 
@@ -14,7 +17,16 @@ fn main() {
     println!("Batch config file contents:");
     println!("base_url: {}", config.base_url);
     println!("id: {}", config.id);
-    for res in config.resources {
-        println!("{}", res);
+    for session in &config.sessions {
+        println!("{}", session);
+    }
+
+    let errors = check_dirs(&config.sessions);
+
+    if !errors.is_empty() {
+        println!("The following {} errors were found:", errors.len());
+        for error in errors {
+            println!("{:?}", error);
+        }
     }
 }

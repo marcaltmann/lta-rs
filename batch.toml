@@ -3,4 +3,5 @@
 base_url = "https://archiv.cdoh.net"
 id = "za-002"
 
-resources = [ "za002", "za070", "za110" ]
+# CMDI calls interviews sessions.
+sessions = [ "za002", "za070", "za110" ]
