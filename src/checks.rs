@@ -1,15 +1,13 @@
 use std::io::{Error, ErrorKind};
-use std::path::Path;
+use std::path::PathBuf;
 use std::fs;
 
-pub fn check_dirs(sessions: &Vec<String>) -> Vec<Error> {
+pub fn check_dirs(paths: &Vec<PathBuf>) -> Vec<Error> {
 	let mut errors: Vec<Error> = Vec::new();
 
-	for session in sessions {
-		let path = Path::new(session);
-
+	for path in paths {
 		if !fs::exists(path).unwrap() {
-			let message = format!("{} not found", session);
+			let message = format!("{} not found", path.display());
 			let error = Error::new(ErrorKind::NotFound, message);
 			errors.push(error);
 			continue;
@@ -18,7 +16,7 @@ pub fn check_dirs(sessions: &Vec<String>) -> Vec<Error> {
 		let metadata = path.metadata().unwrap();
 
 		if !metadata.is_dir() {
-			let message = format!("{} is no directory", session);
+			let message = format!("{} is no directory", path.display());
 			let error = Error::new(ErrorKind::NotADirectory, message);
 			errors.push(error);
 			continue;

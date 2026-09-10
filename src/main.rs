@@ -21,7 +21,13 @@ fn main() {
         println!("{}", session);
     }
 
-    let errors = check_dirs(&config.sessions);
+
+    let parent = config_path.parent().unwrap();
+
+    let f = |s| parent.join(s);
+    let session_paths: Vec<_> = (&config).sessions.iter().map(f).collect();
+
+    let errors = check_dirs(&session_paths);
 
     if !errors.is_empty() {
         println!("The following {} errors were found:", errors.len());
