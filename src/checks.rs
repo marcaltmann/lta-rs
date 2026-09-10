@@ -2,7 +2,7 @@ use std::io::{Error, ErrorKind};
 use std::path::PathBuf;
 use std::fs;
 
-pub fn check_dirs(paths: &Vec<PathBuf>) -> Vec<Error> {
+pub fn check_session_dirs(paths: &Vec<PathBuf>) -> Vec<Error> {
 	let mut errors: Vec<Error> = Vec::new();
 
 	for path in paths {

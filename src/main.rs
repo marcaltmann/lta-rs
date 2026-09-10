@@ -1,7 +1,7 @@
 use std::path::Path;
 
 mod checks;
-use crate::checks::check_dirs;
+use crate::checks::check_session_dirs;
 
 mod config;
 use crate::config::{get_cli_params, load_batch_config};
@@ -27,7 +27,7 @@ fn main() {
     let f = |s| parent.join(s);
     let session_paths: Vec<_> = (&config).sessions.iter().map(f).collect();
 
-    let errors = check_dirs(&session_paths);
+    let errors = check_session_dirs(&session_paths);
 
     if !errors.is_empty() {
         println!("The following {} errors were found:", errors.len());
