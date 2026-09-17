@@ -1,4 +1,4 @@
-use clap::{Command, Arg, ArgAction, crate_name, crate_version, crate_description, crate_authors};
+use clap::{Command, crate_name, crate_version, crate_description, crate_authors};
 use std::io;
 use std::io::prelude::*;
 use std::fs::File;
@@ -22,20 +22,13 @@ pub fn get_cli_params() -> CLIParams {
         .author(crate_authors!("\n"))
         .version(crate_version!())
         .about(crate_description!())
-        .arg(
-            Arg::new("config_file")
-                .required(true)
-                .help("Batch config file at the base of the batch directory")
+        .propagate_version(true)
+        .subcommand_required(true)
+        .arg_required_else_help(true)
+        .subcommand(
+            Command::new("init")
+                .about("Initializes batch.toml file"),
         )
-        .arg(
-            Arg::new("force")
-                .short('f')
-                .long("force")
-                .help("Always fetch CMDI files")
-                .action(ArgAction::SetTrue)
-        )
-        .after_help("Point the tool to the TOML configuration file \
-                     in the batch directory.")
         .get_matches();
 
     let config_file = matches.get_one::<String>("config_file").unwrap();
