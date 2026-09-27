@@ -4,7 +4,7 @@ use std::fs::File;
 use std::path::Path;
 use serde::{Serialize,Deserialize};
 
-const BATCH_CONFIG_FILE: &str = "batch.toml";
+pub const BATCH_CONFIG_FILE: &str = "batch.toml";
 
 #[derive(Serialize, Deserialize)]
 pub struct BatchConfig {
@@ -20,7 +20,7 @@ pub fn init_batch_config() -> io::Result<()> {
 		sessions: Vec::new(),
 	};
 
-	let mut file = File::create(BATCH_CONFIG_FILE)?;
+	let mut file = File::create_new(BATCH_CONFIG_FILE)?;
 	let serialized = toml::to_string_pretty(&new_config).unwrap();
 	let content = format!("# lta batch configuation\n# Created by `lta init`\n\n{serialized}");
 

@@ -28,7 +28,17 @@ fn main() {
 
 
     match matches.subcommand() {
-        Some(("init", _sub_matches)) => init_batch_config().unwrap(),
+        Some(("init", _)) => match init_batch_config() {
+            Ok(()) => println!("Created {}", config_file::BATCH_CONFIG_FILE),
+            Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => {
+                eprintln!("{} already exists", config_file::BATCH_CONFIG_FILE);
+                std::process::exit(1);
+            },
+            Err(e) => {
+                eprintln!("Error: {e}");
+                std::process::exit(1);
+            }
+        },
         _ => unreachable!("Exhausted list of subcommands and subcommand_required prevents `None`"),
     }
 }
