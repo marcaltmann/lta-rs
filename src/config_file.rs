@@ -14,7 +14,7 @@ pub struct BatchConfig {
     pub sessions: Vec<String>,
 }
 
-pub fn init_batch_config() -> io::Result<()> {
+pub fn init_batch_config(batch_id: String, archive_base_url: String) -> io::Result<()> {
 	// Try to get dir names
 	let mut dir_names: Vec<String> = Vec::new();
 
@@ -30,8 +30,8 @@ pub fn init_batch_config() -> io::Result<()> {
 	dir_names.sort();
 
 	let new_config = BatchConfig {
-		archive_base_url: String::from(""),
-		batch_id: String::from("test"),
+		batch_id: batch_id,
+		archive_base_url: archive_base_url,
 		sessions: dir_names,
 	};
 
