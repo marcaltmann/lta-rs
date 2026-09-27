@@ -1,38 +1,34 @@
-use std::path::Path;
+use clap::{Command, crate_name, crate_version, crate_description, crate_authors};
 
-mod checks;
-use crate::checks::check_session_dirs;
+mod config_file;
+use crate::config_file::init_batch_config;
 
-mod config;
-use crate::config::{get_cli_params, load_batch_config};
 
 fn main() {
-    let params = get_cli_params();
-    println!("CLI params:");
-    println!("Batch config file: {}", params.config_file);
-    println!("Force: {}\n", params.force);
+    let matches = Command::new(crate_name!())
+        .author(crate_authors!("\n"))
+        .version(crate_version!())
+        .about(crate_description!())
+        .propagate_version(true)
+        .subcommand_required(true)
+        .arg_required_else_help(true)
+        .subcommand(
+            Command::new("init")
+                .about("Initializes batch.toml file"),
+        )
+        .subcommand(
+            Command::new("check")
+                .about("Does a dry-run"),
+        )
+        .subcommand(
+            Command::new("process")
+                .about("Processes the lta for realz"),
+        )
+        .get_matches();
 
-    let config_path = Path::new(&params.config_file);
-    let config = load_batch_config(config_path).expect("File should be readable JSON file");
-    println!("Batch config file contents:");
-    println!("base_url: {}", config.base_url);
-    println!("id: {}", config.id);
-    for session in &config.sessions {
-        println!("{}", session);
-    }
 
-
-    let parent = config_path.parent().unwrap();
-
-    let f = |s| parent.join(s);
-    let session_paths: Vec<_> = (&config).sessions.iter().map(f).collect();
-
-    let errors = check_session_dirs(&session_paths);
-
-    if !errors.is_empty() {
-        println!("The following {} errors were found:", errors.len());
-        for error in errors {
-            println!("{:?}", error);
-        }
+    match matches.subcommand() {
+        Some(("init", _sub_matches)) => init_batch_config().unwrap(),
+        _ => unreachable!("Exhausted list of subcommands and subcommand_required prevents `None`"),
     }
 }

@@ -1,7 +1,3 @@
-# This is an example batch configuration file.
-
-base_url = "https://archiv.cdoh.net"
-id = "za-002"
-
-# CMDI calls interviews sessions.
-sessions = [ "za002", "za070", "za110" ]
+batch_id = "test"
+archive_base_url = ""
+sessions = []
