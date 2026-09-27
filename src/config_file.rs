@@ -22,7 +22,9 @@ pub fn init_batch_config() -> io::Result<()> {
 
 	let mut file = File::create(BATCH_CONFIG_FILE)?;
 	let serialized = toml::to_string_pretty(&new_config).unwrap();
-	file.write_all(serialized.as_bytes())?;
+	let content = format!("# lta batch configuation\n# Created by `lta init`\n\n{serialized}");
+
+	file.write_all(content.as_bytes())?;
 
 	Ok(())
 }
