@@ -1,5 +1,6 @@
 use std::io;
 use std::io::prelude::*;
+use std::fs;
 use std::fs::File;
 use std::path::Path;
 use serde::{Serialize,Deserialize};
@@ -14,15 +15,29 @@ pub struct BatchConfig {
 }
 
 pub fn init_batch_config() -> io::Result<()> {
+	// Try to get dir names
+	let mut dir_names: Vec<String> = Vec::new();
+
+	for entry in fs::read_dir(".")? {
+		let entry = entry?;
+		if entry.file_type()?.is_dir() {
+			let name = entry.file_name().to_string_lossy().into_owned();
+			if !name.starts_with('.') {
+				dir_names.push(name);
+			}
+		}
+	}
+	dir_names.sort();
+
 	let new_config = BatchConfig {
 		archive_base_url: String::from(""),
 		batch_id: String::from("test"),
-		sessions: Vec::new(),
+		sessions: dir_names,
 	};
 
 	let mut file = File::create_new(BATCH_CONFIG_FILE)?;
 	let serialized = toml::to_string_pretty(&new_config).unwrap();
-	let content = format!("# lta batch configuation\n# Created by `lta init`\n\n{serialized}");
+	let content = format!("# lta batch configuration\n# Created by `lta init`\n\n{serialized}");
 
 	file.write_all(content.as_bytes())?;
 

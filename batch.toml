@@ -1,6 +1,0 @@
-# lta batch configuation
-# Created by `lta init`
-
-batch_id = "test"
-archive_base_url = ""
-sessions = []
