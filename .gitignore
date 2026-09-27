@@ -1,4 +1,5 @@
 /target
 
+/batch.toml
 # Example session files.
 /za*
