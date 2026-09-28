@@ -16,14 +16,20 @@ fn main() {
         .arg_required_else_help(true)
         .subcommand(
             Command::new("init")
-                .about("Initializes batch.toml file"),
+                .about("Initializes batch.toml file")
+                .long_about(r#"Initializes batch.toml file
+
+Fields:
+  batch_id          The id of the batch
+  archive_base_url  The base url of the archive
+  sessions          The interview ids to process, e.g. za001"#),
         )
         .subcommand(
             Command::new("check")
                 .about("Does a dry-run"),
         )
         .subcommand(
-            Command::new("process")
+            Command::new("archive")
                 .about("Processes the lta for realz"),
         )
         .get_matches();
@@ -60,11 +66,9 @@ fn init() {
 }
 
 fn get_input(prompt: &str) -> io::Result<String> {
-    let stdin = io::stdin();
-    print!("{}: ", prompt);
-    io::stdout().flush().unwrap();
+    print!("{prompt}: ");
+    io::stdout().flush()?;
     let mut value = String::new();
-    stdin.read_line(&mut value)?;
-    let trimmed_value = value.trim().to_string();
-    Ok(trimmed_value)
+    io::stdin().read_line(&mut value)?;
+    Ok(value.trim().to_string())
 }

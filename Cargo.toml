@@ -1,5 +1,5 @@
 [package]
-name = "lta-rs"
+name = "lta"
 version = "0.1.0"
 authors = ["Marc Altmann <marcaltmann@posteo.de>"]
 description = "Long term archiving tool"
