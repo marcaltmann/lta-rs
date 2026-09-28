@@ -36,11 +36,6 @@ fn main() {
 }
 
 fn init() {
-    let mut batch_id = String::new();
-    let mut archive_base_url = String::new();
-
-    let stdin = io::stdin();
-
     println!("This utility will walk you through creating a batch.toml file.");
     println!("It only covers the most common items, and tries to guess sensible defaults.\n");
     println!("See `lta help init` for definitive documentation on these fields and exactly what they do.\n");
@@ -48,17 +43,10 @@ fn init() {
 
     println!("Press ^C at any time to quit.");
 
-    print!("batch id: ");
-    io::stdout().flush().unwrap();
-    stdin.read_line(&mut batch_id).unwrap();
-    let trimmed_batch_id = batch_id.trim().to_string();
+    let batch_id = get_input("batch id").unwrap();
+    let archive_base_url = get_input("archive base url").unwrap();
 
-    print!("archive base url: ");
-    io::stdout().flush().unwrap();
-    stdin.read_line(&mut archive_base_url).unwrap();
-    let trimmed_archive_base_url = archive_base_url.trim().to_string();
-
-    match init_batch_config(trimmed_batch_id, trimmed_archive_base_url) {
+    match init_batch_config(batch_id, archive_base_url) {
         Ok(()) => println!("Created {}", config_file::BATCH_CONFIG_FILE),
         Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => {
             eprintln!("{} already exists", config_file::BATCH_CONFIG_FILE);
@@ -69,4 +57,14 @@ fn init() {
             std::process::exit(1);
         }
     }
+}
+
+fn get_input(prompt: &str) -> io::Result<String> {
+    let stdin = io::stdin();
+    print!("{}: ", prompt);
+    io::stdout().flush().unwrap();
+    let mut value = String::new();
+    stdin.read_line(&mut value)?;
+    let trimmed_value = value.trim().to_string();
+    Ok(trimmed_value)
 }
